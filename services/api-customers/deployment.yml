@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-customers
+  namespace: asset
+  labels:
+    app: api-customers
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: api-customers
+      labels:
+        app: api-customers
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-customers
+          image: ghcr.io/terrydevops/api-customers:6.7
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+          resources:
+            requests:
+              memory: 576Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: api-customers

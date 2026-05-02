@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-notifications
+  namespace: asset
+  labels:
+    app: api-notifications
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: api-notifications
+      labels:
+        app: api-notifications
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-notifications
+          image: ghcr.io/terrydevops/api-notifications:6.7
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8088
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+          resources:
+            requests:
+              memory: 576Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: api-notifications

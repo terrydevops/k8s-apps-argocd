@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-fraud
+  namespace: asset
+  labels:
+    app: api-fraud
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: api-fraud
+      labels:
+        app: api-fraud
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-fraud
+          image: ghcr.io/terrydevops/api-fraud:6.7
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+          resources:
+            requests:
+              memory: 576Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: api-fraud

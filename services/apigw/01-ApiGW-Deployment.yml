@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigw-deployment
+  namespace: asset
+  labels:
+    app: apigw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigw
+
+  template:
+    metadata:
+      labels:
+        app: apigw
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: apigw
+          image: ghcr.io/terrydevops/apigw:6.7
+          # imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+            - name: api-key-name
+              valueFrom:
+                secretKeyRef:
+                  name: api-key-secret
+                  key: api-key-name
+            - name: api-key-value
+              valueFrom:
+                secretKeyRef:
+                  name: api-key-secret
+                  key: api-key-value
+          resources:
+            requests:
+              memory: 576Mi
+      # nodeSelector:
+      #   app: api-apps

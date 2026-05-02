@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: asset
+data:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+
+---
+# Replace POSTGRES_PASSWORD before applying. For real use, swap this Secret
+# for SealedSecrets or external-secrets-operator.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+  namespace: asset
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: "REPLACE_ME"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-db-init-config
+  namespace: asset
+data:
+  postgres_db_init.sql: |-
+    DROP DATABASE IF EXISTS customer;
+    CREATE DATABASE customer;
+    DROP DATABASE IF EXISTS notifications;
+    create database notifications;
+    DROP DATABASE IF EXISTS fraud;
+    create database fraud;
+    DROP DATABASE IF EXISTS messages;
+    create database messages;

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-messages
+  namespace: asset
+  labels:
+    app: api-messages
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: api-messages
+      labels:
+        app: api-messages
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-messages
+          image: ghcr.io/terrydevops/api-messages:6.7
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8090
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+          resources:
+            requests:
+              memory: 800Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: api-messages

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-posts
+  namespace: asset
+  labels:
+    app: api-posts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-posts
+
+  template:
+    metadata:
+      name: api-posts
+      labels:
+        app: api-posts
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-posts
+          image: ghcr.io/terrydevops/api-posts:6.8
+          # imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8089
+          # env:
+          #   - name: SPRING_PROFILES_ACTIVE
+          #     value: azure
+          resources:
+            requests:
+              memory: 576Mi

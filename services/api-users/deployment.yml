@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-users
+  namespace: asset
+  labels:
+    app: api-users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-users
+
+  template:
+    metadata:
+      labels:
+        app: api-users
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-users
+          image: ghcr.io/terrydevops/api-users:6.7
+          # imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9090
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+            - name: database
+              valueFrom:
+                secretKeyRef:
+                  name: cosmos-db-secret
+                  key: database
+            - name: uri
+              valueFrom:
+                secretKeyRef:
+                  name: cosmos-db-secret
+                  key: uri
+            - name: key
+              valueFrom:
+                secretKeyRef:
+                  name: cosmos-db-secret
+                  key: key
+          resources:
+            requests:
+              memory: 768Mi

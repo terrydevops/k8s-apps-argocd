@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-security
+  namespace: asset
+  labels:
+    app: api-security
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: api-security
+      labels:
+        app: api-security
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: api-security
+          image: ghcr.io/terrydevops/api-security:6.8
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: azure
+          resources:
+            requests:
+              memory: 576Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: api-security

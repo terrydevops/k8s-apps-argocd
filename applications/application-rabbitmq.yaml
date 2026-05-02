@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq
+  namespace: argocd
+spec:
+  destination:
+    namespace: asset
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    path: bootstrap/rabbitmq
+    repoURL: 'https://github.com/terrydevops/k8s-apps-argocd.git'
+    targetRevision: master
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
